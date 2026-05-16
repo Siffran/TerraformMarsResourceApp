@@ -1,10 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    // alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.android)
-    // kotlin("kapt")
-    // kotlin("plugin.serialization")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -48,7 +46,7 @@ dependencies {
     // Existing
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
-    // implementation(libs.material)
+    implementation(libs.material)
 
     //implementation("androidx.compose.material3:material3:1.4.0")
     //implementation("androidx.compose.material3:material3-window-size-class:1.4.0")
@@ -70,11 +68,11 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    // kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Serialization
