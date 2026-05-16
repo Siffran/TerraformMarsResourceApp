@@ -21,6 +21,10 @@ class SessionListViewModel @Inject constructor(
     fun createSession(name: String, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
             val sessionId = sessionRepository.createSession(name)
+            // Create default active player with TR = 20
+            val playerId = sessionRepository.addPlayer(sessionId, "Active Player", initialTR = 20)
+            // Set the player as active
+            sessionRepository.setActivePlayer(playerId, sessionId)
             onSuccess(sessionId)
         }
     }

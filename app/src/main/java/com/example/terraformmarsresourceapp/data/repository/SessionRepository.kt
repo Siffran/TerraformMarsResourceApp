@@ -47,10 +47,11 @@ class SessionRepository(
         gameSessionDao.deleteById(sessionId)
     }
 
-    suspend fun addPlayer(gameSessionId: String, playerName: String): String {
+    suspend fun addPlayer(gameSessionId: String, playerName: String, initialTR: Int = 0): String {
         val player = PlayerEntity(
             gameSessionId = gameSessionId,
-            name = playerName
+            name = playerName,
+            terraformingRating = initialTR
         )
         playerDao.insert(player)
         return player.id

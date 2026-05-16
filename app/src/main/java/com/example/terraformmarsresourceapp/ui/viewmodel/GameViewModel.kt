@@ -143,13 +143,16 @@ class GameViewModel @Inject constructor(
             val currentSession = _gameSession.value ?: return@launch
 
             for (player in currentSession.players) {
+                // Convert energy to heat first
+                val energyConverted = player.resources.energy
+
                 val newResources = player.resources.copy(
                     megacredits = player.resources.megacredits + player.resources.megacreditsProduction + (player.terraformingRating * 1),
                     steel = player.resources.steel + player.resources.steelProduction,
                     titanium = player.resources.titanium + player.resources.titaniumProduction,
                     plants = player.resources.plants + player.resources.plantsProduction,
-                    energy = player.resources.energy + player.resources.energyProduction,
-                    heat = player.resources.heat + player.resources.heatProduction
+                    energy = player.resources.energyProduction,
+                    heat = player.resources.heat + player.resources.heatProduction + energyConverted
                 )
 
                 val updatedPlayerEntity = PlayerEntity(
