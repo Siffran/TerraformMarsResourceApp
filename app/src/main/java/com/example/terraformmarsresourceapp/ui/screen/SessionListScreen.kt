@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -26,7 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Alignment
-import androidx.hilt.navigation.compose.hiltViewModel
+//import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.terraformmarsresourceapp.ui.viewmodel.SessionListViewModel
 
 @Composable
@@ -80,8 +84,8 @@ fun SessionListScreen(
 
             if (showCreateDialog) {
                 CreateSessionDialog(
-                    onConfirm = { name ->
-                        viewModel.createSession(name) { sessionId ->
+                    onConfirm = { name, playerCount ->
+                        viewModel.createSession(name, playerCount) { sessionId ->
                             showCreateDialog = false
                             onSessionSelected(sessionId)
                         }
@@ -175,6 +179,81 @@ fun SessionListScreen(
 
 @Composable
 fun CreateSessionDialog(
+    onConfirm: (String, Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var name by remember { mutableStateOf("Game 1") }
+    var selectedPlayerCount by remember { mutableStateOf(2) }
+    var expandedPlayerDropdown by remember { mutableStateOf(false) }
+    val playerOptions = listOf(2, 3, 4, 5)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                "Create New Session",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Session Name") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+
+                // Player count dropdown
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { expandedPlayerDropdown = true },
+                        modifier = Modifier.width(IntrinsicSize.Max)
+                    ) {
+                        Text("Players: $selectedPlayerCount")
+                    }
+
+                    androidx.compose.material3.DropdownMenu(
+                        expanded = expandedPlayerDropdown,
+                        onDismissRequest = { expandedPlayerDropdown = false },
+                        modifier = Modifier.width(IntrinsicSize.Max)
+                    ) {
+                        playerOptions.forEach { playerCount ->
+                            androidx.compose.material3.DropdownMenuItem(
+                                text = { Text(playerCount.toString()) },
+                                onClick = {
+                                    selectedPlayerCount = playerCount
+                                    expandedPlayerDropdown = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(name, selectedPlayerCount) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text("Create")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+/*
+@Composable
+fun CreateSessionDialog(
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -214,4 +293,4 @@ fun CreateSessionDialog(
         }
     )
 }
-
+        */

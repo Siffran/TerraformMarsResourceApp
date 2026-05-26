@@ -262,7 +262,8 @@ fun MyResourcesTab(
                         onChange = { newValue ->
                             viewModel.updateResourceValue(gameSessionId, player.id, "megacreditsProduction", newValue)
                         },
-                        increments = listOf(1)
+                        increments = listOf(1),
+                        minValue = -5
                     )
                     ResourceRow(
                         label = "Steel/gen",
@@ -498,7 +499,8 @@ fun ResourceRow(
     label: String,
     value: Int,
     onChange: (Int) -> Unit,
-    increments: List<Int> = listOf(1)
+    increments: List<Int> = listOf(1),
+    minValue: Int = 0
 ) {
     Row(
         modifier = Modifier
@@ -561,7 +563,7 @@ fun ResourceRow(
                 // Minus buttons
                 for (inc in increments) {
                     Button(
-                        onClick = { onChange(maxOf(0, value - inc)) },
+                        onClick = { onChange(maxOf(minValue, value - inc)) },
                         modifier = Modifier,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer

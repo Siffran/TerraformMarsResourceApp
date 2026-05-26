@@ -18,13 +18,19 @@ class SessionListViewModel @Inject constructor(
     val sessions: StateFlow<List<GameSessionEntity>> = sessionRepository.getAllSessions()
         .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.Lazily, emptyList())
 
-    fun createSession(name: String, onSuccess: (String) -> Unit) {
+    fun createSession(name: String, playerCount: Int, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
             val sessionId = sessionRepository.createSession(name)
-            // Create default active player with TR = 20
-            val playerId = sessionRepository.addPlayer(sessionId, "Active Player", initialTR = 20)
-            // Set the player as active
-            sessionRepository.setActivePlayer(playerId, sessionId)
+
+            repeat(playerCount) { index ->
+                val playerName = "Player ${index + 1}"
+                val playerId = sessionRepository.addPlayer(sessionId, playerName, initialTR = 20)
+
+                // Set the player as active
+                if (index == 0) {
+                    sessionRepository.setActivePlayer(playerId, sessionId)
+                }
+            }
             onSuccess(sessionId)
         }
     }
